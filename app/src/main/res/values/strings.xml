@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Lips107: InfiRadio</string>
+    <string name="loadingText">LOADING</string>
+    <string name="playText">PLAY</string>
+    <string name="pauseText">PAUSE</string>
+    <string name="turnOnButtonInitialtext">End Stream</string>
+    <string name="txtReStream">ReStream</string>
+</resources>
