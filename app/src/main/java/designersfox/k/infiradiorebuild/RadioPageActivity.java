@@ -1,7 +1,6 @@
 package designersfox.k.infiradiorebuild;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -11,15 +10,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.Random;
 //will be used:
-import android.os.AsyncTask;
+
 
 //RELEASE VERSION.
 
@@ -27,25 +24,28 @@ public class RadioPageActivity extends Activity {
 
     private static final int MAX_REFRESH_CTR = 3;
     private static final int RADIO_AMOUNT = 2;
+    int currentStop = -999;
+    int currentStopTime = -999;
+    int refreshCounter = 0;
+    boolean started = false;
+    boolean mediaPlayersInitialized = false;
+    boolean doubleBackToExitPressedOnce = false;
+
     SharedPreferences sharedPreferences;
-    int currentStop = -99;
-    int currentStopTime;
     Random rand;
     Menu menu;
     Button turnOnButton;
     MenuItem refreshButton;
     EditText developerText;
-    Boolean started = false;
+
     MediaPlayer mediaPlayerLips;
     MediaPlayer mediaPlayerFlash;
     MediaPlayer mediaPlayerWave;
     MediaPlayer mediaPlayerVRock;
     MediaPlayer currentMediaPlayer;
     ArrayList<MediaPlayer> mediaPlayers;
-    //boolean prepared = false;
-    boolean mediaPlayersInitialized = false;
-    boolean doubleBackToExitPressedOnce = false;
-    int alreadyRefreshed = 0;
+
+
 
 
     //MediaPlayer currentMediaPlayer;
@@ -101,6 +101,7 @@ public class RadioPageActivity extends Activity {
         mediaPlayerFlash.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mediaPlayerFlash.setLooping(true);
         mediaPlayers.add(mediaPlayerFlash);
+        mediaPlayersInitialized = true;
         /*mediaPlayerWave = MediaPlayer.create(RadioPageActivity.this, R.raw.wave);
         mediaPlayerWave.setAudioStreamType(AudioManager.STREAM_MUSIC);
         mediaPlayerWave.setLooping(true);
@@ -118,8 +119,8 @@ public class RadioPageActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.radiomenu, menu);
         this.menu = menu;
-        if (alreadyRefreshed == MAX_REFRESH_CTR){menu.findItem(R.id.refreshButton).setVisible(false);} //optional: refresh once
-        menu.findItem(R.id.textRefreshCounter).setTitle(String.valueOf(MAX_REFRESH_CTR - alreadyRefreshed));
+        if (refreshCounter == MAX_REFRESH_CTR){menu.findItem(R.id.refreshButton).setVisible(false);} //optional: refresh once
+        menu.findItem(R.id.textRefreshCounter).setTitle(String.valueOf(MAX_REFRESH_CTR - refreshCounter));
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -128,7 +129,7 @@ public class RadioPageActivity extends Activity {
         switch (item.getItemId()){
             case R.id.turnOnButton:
                 if(!started){
-                    if(currentStop != -99){
+                    if(currentStop != -999){
                         int timeElapsedSinceStop = (int) System.currentTimeMillis() - currentStopTime;
                         mediaPlayerLips.seekTo(currentStop +
                                 timeElapsedSinceStop);
@@ -144,7 +145,7 @@ public class RadioPageActivity extends Activity {
                 break;
             case R.id.refreshButton:
                 refresh();
-                alreadyRefreshed++;
+                refreshCounter++;
                 invalidateOptionsMenu();
                 break;
             default:
@@ -162,9 +163,6 @@ public class RadioPageActivity extends Activity {
         super.onDestroy();
         currentStop = currentMediaPlayer.getCurrentPosition();
         currentStopTime = (int) System.currentTimeMillis();
-        for (MediaPlayer e: mediaPlayers){
-            if(e != null){e.stop(); e = null;}
-        }
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("currentStop", currentStop);
         editor.putInt("currentStopTime", currentStopTime);
@@ -174,13 +172,19 @@ public class RadioPageActivity extends Activity {
         }
         editor.putInt("currentStation", currentStation);
         editor.apply();
+        for (MediaPlayer e: mediaPlayers){
+            if(e != null){e.stop(); e = null;}
+        }
     }
 
     private void fetch() {
-        if (mediaPlayerLips == null) {initMediaPlayers();}
-        else{currentMediaPlayer = mediaPlayerLips;
+        if (mediaPlayersInitialized) {
+            currentMediaPlayer = mediaPlayerLips;
             loadSharedPref();
             startCurrentPlayer();}
+        else{
+            initMediaPlayers();
+        }
     }
 
     private void loadSharedPref(){
