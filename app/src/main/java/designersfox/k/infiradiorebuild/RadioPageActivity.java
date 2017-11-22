@@ -44,12 +44,7 @@ public class RadioPageActivity extends Activity {
     MediaPlayer mediaPlayerVRock;
     MediaPlayer currentMediaPlayer;
     ArrayList<MediaPlayer> mediaPlayers;
-
-
-
-
-    //MediaPlayer currentMediaPlayer;
-
+    //metadata for fetching radio (initial version - not updated)
     //String URL = "http://sendeyo.com/en/8aa6e859b1";
     //String SecondaryURL =
     // "http://cs1.mp3.pm/download/20664283/dWVvR3MzVUVodE1IQ2FRSElqT0x1WlJpS2plcVhDcW91NVIwaWhqZTUzQitacWtCVnoyQlNPQzI5TU5LcTRROTBGb3VQMCtVRlM3d3hoZkUyZ2lwcDAveDJSVXY5UWZmMjhEVzZRVlIvcDJEanNGeGFzNk9aUTVpajNCYUFzQkY/GTA_III_-_Radio_Lips_106_(mp3.pm).mp3"
@@ -64,8 +59,7 @@ public class RadioPageActivity extends Activity {
             initMediaPlayers();
         }
 
-        //initCurrentMediaPlayer();
-
+        startCurrentPlayer();
 
         //new PlayerTask().execute();
     }
@@ -111,8 +105,8 @@ public class RadioPageActivity extends Activity {
         mediaPlayerVRock.setLooping(true);
         mediaPlayers.add(mediaPlayerVRock);
         mediaPlayers.add(currentMediaPlayer);
-        mediaPlayersInitialized = true;*/
-        fetch();
+        mediaPlayersInitialized = true;*/ //todo: will be added after the android api26 metadata reading bug is fixed.
+        fetchCurrentMediaPlayer();
     }
 
     @Override
@@ -177,11 +171,10 @@ public class RadioPageActivity extends Activity {
         }
     }
 
-    private void fetch() {
+    private void fetchCurrentMediaPlayer() {
         if (mediaPlayersInitialized) {
             currentMediaPlayer = mediaPlayerLips;
-            loadSharedPref();
-            startCurrentPlayer();}
+            loadSharedPref();}
         else{
             initMediaPlayers();
         }
