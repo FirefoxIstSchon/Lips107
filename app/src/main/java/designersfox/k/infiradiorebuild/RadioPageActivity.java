@@ -15,8 +15,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Random;
-//will be used:
-
 
 //RELEASE VERSION.
 
@@ -24,9 +22,9 @@ public class RadioPageActivity extends Activity {
 
     private static final int MAX_REFRESH_CTR = 3;
     private static final int RADIO_AMOUNT = 2;
-    int currentStop = -999;
-    int currentStopTime = -999;
     int refreshCounter = 0;
+    int currentStop = -999;
+    long currentStopTime = -999;
     boolean started = false;
     boolean mediaPlayersInitialized = false;
     boolean doubleBackToExitPressedOnce = false;
@@ -58,8 +56,6 @@ public class RadioPageActivity extends Activity {
             initViews();
             initMediaPlayers();
         }
-
-        startCurrentPlayer();
 
         //new PlayerTask().execute();
     }
@@ -105,7 +101,7 @@ public class RadioPageActivity extends Activity {
         mediaPlayerVRock.setLooping(true);
         mediaPlayers.add(mediaPlayerVRock);
         mediaPlayers.add(currentMediaPlayer);
-        mediaPlayersInitialized = true;*/ //todo: will be added after the android api26 metadata reading bug is fixed.
+        mediaPlayersInitialized = true;*/ //todo: will be added after the android api 26 bug fixed.
         fetchCurrentMediaPlayer();
     }
 
@@ -124,9 +120,9 @@ public class RadioPageActivity extends Activity {
             case R.id.turnOnButton:
                 if(!started){
                     if(currentStop != -999){
-                        int timeElapsedSinceStop = (int) System.currentTimeMillis() - currentStopTime;
+                        long timeElapsedSinceStop = System.currentTimeMillis() - currentStopTime;
                         mediaPlayerLips.seekTo(currentStop +
-                                timeElapsedSinceStop);
+                                (int) timeElapsedSinceStop);
                     }
                     mediaPlayerLips.start();
                     started = true;
@@ -155,17 +151,7 @@ public class RadioPageActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        currentStop = currentMediaPlayer.getCurrentPosition();
-        currentStopTime = (int) System.currentTimeMillis();
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt("currentStop", currentStop);
-        editor.putInt("currentStopTime", currentStopTime);
-        int currentStation = -999;
-        for(int i = 0; i < RADIO_AMOUNT; i++){
-            if (currentMediaPlayer == mediaPlayers.get(i)){currentStation = i;}
-        }
-        editor.putInt("currentStation", currentStation);
-        editor.apply();
+        saveSharedPref();
         for (MediaPlayer e: mediaPlayers){
             if(e != null){e.stop(); e = null;}
         }
@@ -178,11 +164,26 @@ public class RadioPageActivity extends Activity {
         else{
             initMediaPlayers();
         }
+        startCurrentPlayer();
+    }
+
+    private void saveSharedPref(){
+        currentStop = currentMediaPlayer.getCurrentPosition();
+        currentStopTime = (int) System.currentTimeMillis();
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("currentStop", currentStop);
+        editor.putLong("currentStopTime", currentStopTime);
+        int currentStation = -999;
+        for(int i = 0; i < RADIO_AMOUNT; i++){
+            if (currentMediaPlayer == mediaPlayers.get(i)){currentStation = i;}
+        }
+        editor.putInt("currentStation", currentStation);
+        editor.apply();
     }
 
     private void loadSharedPref(){
         sharedPreferences = getSharedPreferences("Lips107Prefs", Context.MODE_PRIVATE);
-        currentStopTime = sharedPreferences.getInt("currentStopTime", -999);
+        currentStopTime = sharedPreferences.getLong("currentStopTime", -999);
         currentStop = sharedPreferences.getInt("currentStop", -999);
         switch (sharedPreferences.getInt("currentStation", 0)){
             case 0: currentMediaPlayer = mediaPlayerLips; break;
@@ -193,7 +194,7 @@ public class RadioPageActivity extends Activity {
         }
         if(currentStop != -999 & currentStopTime != -999){
             if(System.currentTimeMillis() - currentStopTime < 30*1000)
-                currentMediaPlayer.seekTo(currentStop + (int)System.currentTimeMillis() - currentStopTime);
+                currentMediaPlayer.seekTo(currentStop + (int)(System.currentTimeMillis() - currentStopTime));
         }
     }
 
