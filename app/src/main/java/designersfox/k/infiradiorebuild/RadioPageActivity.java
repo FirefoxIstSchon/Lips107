@@ -2,6 +2,8 @@ package designersfox.k.infiradiorebuild;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -25,6 +27,7 @@ public class RadioPageActivity extends Activity {
 
     private static final int MAX_REFRESH_CTR = 3;
     private static final int RADIO_AMOUNT = 2;
+    SharedPreferences sharedPreferences;
     int currentStop = -99;
     int currentStopTime;
     Random rand;
@@ -56,7 +59,7 @@ public class RadioPageActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_radio_page);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE); //todo: imp screen turning cases.
-        if(mediaPlayerLips == null){
+        if(currentMediaPlayer == null){
             initViews();
             initMediaPlayers();
         }
@@ -149,25 +152,6 @@ public class RadioPageActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    /*@Override
-    protected void onPause() {
-        super.onPause();
-        if(started){
-            currentStop = mediaPlayerLips.getCurrentPosition();
-            mediaPlayerLips.pause();
-            currentStopTime = (int) System.currentTimeMillis();
-        }
-    }
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if(started){
-            int destination = (int) System.currentTimeMillis() - currentStopTime;
-            mediaPlayerLips.seekTo(currentStop + destination, MediaPlayer.SEEK_NEXT_SYNC);
-            mediaPlayerLips.start();
-        }
-    }*/
-
     @Override
     public void invalidateOptionsMenu() {
         super.invalidateOptionsMenu();
@@ -176,15 +160,44 @@ public class RadioPageActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        currentStop = currentMediaPlayer.getCurrentPosition();
+        currentStopTime = (int) System.currentTimeMillis();
         for (MediaPlayer e: mediaPlayers){
             if(e != null){e.stop(); e = null;}
         }
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("currentStop", currentStop);
+        editor.putInt("currentStopTime", currentStopTime);
+        int currentStation = -999;
+        for(int i = 0; i < RADIO_AMOUNT; i++){
+            if (currentMediaPlayer == mediaPlayers.get(i)){currentStation = i;}
+        }
+        editor.putInt("currentStation", currentStation);
+        editor.apply();
     }
 
     private void fetch() {
         if (mediaPlayerLips == null) {initMediaPlayers();}
         else{currentMediaPlayer = mediaPlayerLips;
+            loadSharedPref();
             startCurrentPlayer();}
+    }
+
+    private void loadSharedPref(){
+        sharedPreferences = getSharedPreferences("Lips107Prefs", Context.MODE_PRIVATE);
+        currentStopTime = sharedPreferences.getInt("currentStopTime", -999);
+        currentStop = sharedPreferences.getInt("currentStop", -999);
+        switch (sharedPreferences.getInt("currentStation", 0)){
+            case 0: currentMediaPlayer = mediaPlayerLips; break;
+            case 1: currentMediaPlayer = mediaPlayerFlash; break;
+            case 2: currentMediaPlayer = mediaPlayerWave; break;
+            case 3: currentMediaPlayer = mediaPlayerVRock; break;
+            default:
+        }
+        if(currentStop != -999 & currentStopTime != -999){
+            if(System.currentTimeMillis() - currentStopTime < 30*1000)
+                currentMediaPlayer.seekTo(currentStop + (int)System.currentTimeMillis() - currentStopTime);
+        }
     }
 
     private void refresh(){
@@ -215,6 +228,12 @@ public class RadioPageActivity extends Activity {
         startCurrentPlayer();
     }
 
+    private void startCurrentPlayer(){
+        currentMediaPlayer.start();
+        started = true;
+        currentMediaPlayer.seekTo(rand.nextInt(60 * 15 * 1000));
+    }
+
     private void runRefresh(){
         new Thread(new Runnable() {
             @Override
@@ -222,12 +241,6 @@ public class RadioPageActivity extends Activity {
                 refresh();
             }
         }).start();
-    }
-
-    private void startCurrentPlayer(){
-        currentMediaPlayer.start();
-        started = true;
-        currentMediaPlayer.seekTo(rand.nextInt(60 * 15 * 1000));
     }
 
     @Override
@@ -246,5 +259,4 @@ public class RadioPageActivity extends Activity {
             }
         }, 3000);
     }
-
 }
