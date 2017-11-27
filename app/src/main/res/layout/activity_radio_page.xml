@@ -5,7 +5,7 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.release.k.lips106.RadioPageActivity">
+    tools:context="designersfox.k.infiradiorebuild.RadioPageActivity">
 
     <ImageView
         android:id="@+id/imageView"
@@ -25,5 +25,11 @@
         android:ems="10"
         android:inputType="textPersonName"
         android:visibility="gone" />
+
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/gifView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"/>
 
 </RelativeLayout>

@@ -10,11 +10,17 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
+
+import pl.droidsonroids.gif.GifDrawable;
+import pl.droidsonroids.gif.GifImageView;
 
 //RELEASE VERSION.
 
@@ -35,6 +41,8 @@ public class RadioPageActivity extends Activity {
     Button turnOnButton;
     MenuItem refreshButton;
     EditText developerText;
+    ImageView imageView;
+    GifImageView gifView;
 
     MediaPlayer mediaPlayerLips;
     MediaPlayer mediaPlayerFlash;
@@ -51,7 +59,7 @@ public class RadioPageActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_radio_page);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE); //todo: imp screen turning cases.
+
         if(currentMediaPlayer == null){
             initViews();
             initMediaPlayers();
@@ -78,6 +86,27 @@ public class RadioPageActivity extends Activity {
         refreshButton = findViewById(R.id.refreshButton);
         turnOnButton = findViewById(R.id.turnOnButton);
         developerText = findViewById(R.id.developerText);
+        imageView = findViewById(R.id.imageView);
+        gifView = findViewById(R.id.gifView);
+        runGiffer();
+    }
+
+    private void runGiffer(){
+        String src = String.valueOf(new Random().nextInt(4));
+        String filename = "g"+src;
+        try {
+            GifDrawable gifFromPath = new GifDrawable( getAssets(),filename+".gif");
+            gifView.setBackground(gifFromPath);
+            imageView.setVisibility(View.GONE);
+            gifView.setVisibility(View.VISIBLE);
+            switch (Integer.parseInt(src)){
+                case 0: setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT); break;
+                case 1: setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT); break;
+                case 2: setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE); break;
+                case 3: setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE); break;
+                default: setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE);
+            }
+        }catch (IOException e){e.printStackTrace();}
     }
 
     private void initMediaPlayers(){
@@ -257,4 +286,31 @@ public class RadioPageActivity extends Activity {
             }
         }, 3000);
     }
+
+
+
+
+
+
 }
+
+/*  //PERMISSION STUFF:
+    private void checkForPermissions(){ //call dis w final int CALL_REQUEST = 1; declared
+        int vibratePermissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE);
+        if(vibratePermissionCheck != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE}, CALL_REQUEST);
+        }else{
+
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode){
+            case CALL_REQUEST: if(grantResults.length >= 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED){}
+                               else{Toast.makeText(this, "Permission not granted.", Toast.LENGTH_SHORT).show();}
+                               break;
+        }
+    }*/
+
