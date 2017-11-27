@@ -15,14 +15,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
 
@@ -39,7 +35,6 @@ public class RadioPageActivity extends Activity {
     boolean mediaPlayersInitialized = false;
     boolean doubleBackToExitPressedOnce = false;
 
-    RelativeLayout radioPageLayout;
     SharedPreferences sharedPreferences;
     Random rand;
     Menu menu;
