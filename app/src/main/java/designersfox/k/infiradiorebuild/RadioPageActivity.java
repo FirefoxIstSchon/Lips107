@@ -10,10 +10,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,6 +37,7 @@ public class RadioPageActivity extends Activity {
     boolean mediaPlayersInitialized = false;
     boolean doubleBackToExitPressedOnce = false;
 
+    RelativeLayout radioPageLayout;
     SharedPreferences sharedPreferences;
     Random rand;
     Menu menu;
@@ -83,11 +86,15 @@ public class RadioPageActivity extends Activity {
     }*/
 
     private void initViews(){
+        getActionBar().hide();
+        Toast.makeText(this, "Swipe Down: Menu", Toast.LENGTH_LONG).show();
+
         refreshButton = findViewById(R.id.refreshButton);
         turnOnButton = findViewById(R.id.turnOnButton);
         developerText = findViewById(R.id.developerText);
         imageView = findViewById(R.id.imageView);
         gifView = findViewById(R.id.gifView);
+
         runGiffer();
     }
 
@@ -287,11 +294,17 @@ public class RadioPageActivity extends Activity {
         }, 3000);
     }
 
-
-
-
-
-
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                getActionBar().show(); break;
+            case MotionEvent.ACTION_UP:
+                getActionBar().hide(); break;
+            default:
+        }
+        return super.onTouchEvent(event);
+    }
 }
 
 /*  //PERMISSION STUFF:
