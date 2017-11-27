@@ -296,14 +296,22 @@ public class RadioPageActivity extends Activity {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        switch (event.getAction()){
+        switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                getActionBar().show(); break;
-            case MotionEvent.ACTION_UP:
-                getActionBar().hide(); break;
-            default:
+                if(!getActionBar().isShowing()){
+                    getActionBar().show();
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            synchronized (RadioPageActivity.this){
+                                getActionBar().hide();
+                            }
+                        }
+                    }, 15*1000);
+                    return true;
+                }
         }
-        return super.onTouchEvent(event);
+        return false;
     }
 }
 
