@@ -20,6 +20,8 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
@@ -298,21 +300,13 @@ public class RadioPageActivity extends Activity {
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if(!getActionBar().isShowing()){
-                    getActionBar().show();
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            synchronized (RadioPageActivity.this){
-                                getActionBar().hide();
-                            }
-                        }
-                    }, 15*1000);
-                    return true;
-                }
+                if(!getActionBar().isShowing()){getActionBar().show();}
+                else{getActionBar().hide();}
+                return true;
         }
         return false;
     }
+
 }
 
 /*  //PERMISSION STUFF:
