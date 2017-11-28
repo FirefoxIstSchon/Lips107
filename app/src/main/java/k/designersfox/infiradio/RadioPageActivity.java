@@ -34,6 +34,7 @@ public class RadioPageActivity extends Activity {
     boolean started = false;
     boolean mediaPlayersInitialized = false;
     boolean doubleBackToExitPressedOnce = false;
+    boolean isMenuHelpShown;
 
     SharedPreferences sharedPreferences;
     Random rand;
@@ -61,7 +62,7 @@ public class RadioPageActivity extends Activity {
         setContentView(R.layout.activity_radio_page);
 
         if(currentMediaPlayer == null){
-            initViews();
+            initViews(savedInstanceState);
             initMediaPlayers();
         }
 
@@ -82,10 +83,11 @@ public class RadioPageActivity extends Activity {
         }
     }*/
 
-    private void initViews(){
+    private void initViews(Bundle bundle){
         getActionBar().hide();
-        Toast.makeText(this, "Swipe Down: Menu", Toast.LENGTH_LONG).show();
-
+        if(!bundle.getBoolean("isMenuHelpShown", false)){
+            Toast.makeText(this, "Swipe Down: Menu", Toast.LENGTH_LONG).show();
+            isMenuHelpShown = true;}
         refreshButton = findViewById(R.id.refreshButton);
         turnOnButton = findViewById(R.id.turnOnButton);
         developerText = findViewById(R.id.developerText);
@@ -206,6 +208,7 @@ public class RadioPageActivity extends Activity {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("currentStop", currentStop);
         editor.putLong("currentStopTime", currentStopTime);
+        editor.putBoolean("isMenuHelpShown", isMenuHelpShown);
         int currentStation = -999;
         for(int i = 0; i < RADIO_AMOUNT; i++){
             if (currentMediaPlayer == mediaPlayers.get(i)){currentStation = i;}
