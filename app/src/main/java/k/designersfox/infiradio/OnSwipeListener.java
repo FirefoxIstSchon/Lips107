@@ -1,4 +1,4 @@
-package designersfox.k.infiradio;
+package k.designersfox.infiradio;
 
 import android.view.GestureDetector;
 import android.view.MotionEvent;

@@ -1,4 +1,4 @@
-package designersfox.k.infiradio;
+package k.designersfox.infiradio;
 
 import android.app.Activity;
 import android.content.Context;
