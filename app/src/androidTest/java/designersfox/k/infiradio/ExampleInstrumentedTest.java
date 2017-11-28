@@ -1,4 +1,4 @@
-package designersfox.k.infiradiorebuild;
+package designersfox.k.infiradio;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

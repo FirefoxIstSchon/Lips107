@@ -1,4 +1,4 @@
-package designersfox.k.infiradiorebuild;
+package designersfox.k.infiradio;
 
 import org.junit.Test;
 
