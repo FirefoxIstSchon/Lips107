@@ -295,10 +295,11 @@ public class RadioPageActivity extends Activity {
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if(!getActionBar().isShowing()){getActionBar().show();}
-                else{getActionBar().hide();}
-                return true;
-        }
+                if (!getActionBar().isShowing()) {
+                    getActionBar().show();
+                } /*else {getActionBar().hide();}
+                    return true;
+                }*/}
         return false;
     }
 
