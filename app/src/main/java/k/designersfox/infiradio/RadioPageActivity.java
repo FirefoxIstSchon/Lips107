@@ -157,12 +157,12 @@ public class RadioPageActivity extends Activity {
                         mediaPlayerLips.seekTo(currentStop +
                                 (int) timeElapsedSinceStop);
                     }
-                    mediaPlayerLips.start();
+                    currentMediaPlayer.start();
                     started = true;
                 }else{
                     currentStop = mediaPlayerLips.getCurrentPosition();
                     currentStopTime = (int) System.currentTimeMillis();
-                    mediaPlayerLips.pause();
+                    currentMediaPlayer.pause();
                     started = false;
                 }
                 break;

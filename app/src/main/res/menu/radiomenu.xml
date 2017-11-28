@@ -9,18 +9,18 @@
     <item
         android:id="@+id/refreshButton"
         android:title=""
-        app:showAsAction="always"
+        android:showAsAction="always"
         android:icon="@drawable/refreshicon"
         />
     <item
         android:id="@+id/turnOnButton"
         android:title=""
-        app:showAsAction="always"
+        android:showAsAction="always"
         android:icon="@drawable/turnonicon"
         />
     <item
         android:id="@+id/textRefreshCounter"
         android:title=""
-        app:showAsAction="always"
+        android:showAsAction="always"
         />
 </menu>
